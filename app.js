@@ -15,7 +15,7 @@ const url = 'mongodb://localhost:27017/todoapp';
 //Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: true
+    extended: false
 }));
 //static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -41,10 +41,12 @@ app.get('/', (req, res, next) => {
         if (err) {
             return console.log(err);
         }
-        // console.log(todos);
+        console.log(todos);
+        console.log('open index at get request');
         res.render('index', {
             todos: todos
         });
+        //  res.json(todos);
     });
 
 });
@@ -58,8 +60,9 @@ app.post('/todo/add', (req, res, next) => {
         if (err) {
             return console.log(err);
         }
-        console.log('Todo Added...');
+        console.log('Todo Added at post router');
         res.redirect('/');
+        // res.json(todo);
     });
 });
 
