@@ -1,30 +1,55 @@
 <% include ../views/partials/header %>
-<div class="row">
-    <div class="col-md-6">
-       <form method="post" action="/todo/add">
+
+<div class="col-md-6">
+    <% if(typeof errors !=='undefined'){%>
+        <%errors.forEach(function(error){%>
+            <div class="alert alert-danger">
+                <%=error.errorMessage %>
+            </div>
+        <%});%>
+    <%}%>
+
+    <div class="card card-body">
+        <form method="post" action="/todo/add">
             <div class="form-group">
                 <label>Todo Name</label>
+                <% if(typeof text!=='undefined'){ %>
+                    <input class="form-control" type="text" name="text" value="<%=text%>">
+                <% }else{ %>
                 <input class="form-control" type="text" name="text" placeholder="Add Todo">
+                <% } %>
             </div>
             <div class="form-group">
                 <label>Todo Body</label>
+                <% if(typeof body!=='undefined'){ %>
+                <textarea class="form-control" name="body"><%= body %></textarea>
+                <% }else{ %>
                 <textarea class="form-control" name="body" placeholder="Add Body"></textarea>
+                <% } %>
             </div>
             
             <button class="btn btn-primary" type="submit">Submit</button>
         </form> 
     </div>
-     <div class="col-md-6">
-        <ul class="list-group">
-            <% todos.forEach(function(todo){ %>
-            <li class="list-group-item"> <%=todo.text%> - <%=todo.body%> 
-            <a class="btn btn-primary" href="/todo/edit/<%=todo._id%>">Edit</a>
-            <a data-id="<%=todo._id%>" href="#" class="delete-todo btn btn-danger">Delete</a>
-            </li>
-            <%}); %>
-        </ul>
-    </div>
 </div>
 
+    <div class="col-md-6"> 
+        <div class="card card-body">  
+        <% if(typeof todos !=='undefined'){ %>  
+            <ul class="list-group">
+                <% todos.forEach(function(todo){ %>
+                <li class="list-group-item mb-1"> <%=todo.text%> - <%=todo.body%> <br>
+                <a class="btn btn-primary mb-1" href="/edit/<%=todo._id%>">Edit</a>
+                <form method="post" action="/delete/<%=todo._id%>?_method=DELETE">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="DELETE" class="btn btn-danger">
+                </form>
+                </li>
+                <%}); %>
+            </ul>
+        <%}%>
+        </div>
+    </div>
+    
 <% include ../views/partials/footer %>
     
