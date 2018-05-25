@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
+const flash=require('connect-flash');
+const session=require('express-session');
 const mongoose = require('mongoose');
 //port
 const port = 3000;
@@ -27,6 +29,21 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(methodOverride('_method'));
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+    //cookie: { secure: true }
+  }));
+
+app.use(flash());
+app.use(function(req,res,next){
+    res.locals.success_msg=req.flash('success_msg');
+    res.locals.error_msg=req.flash('error_msg');
+    res.locals.error=req.flash('error');
+    next();
+});
 
 //static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -112,6 +129,7 @@ app.post('/todo/add', (req, res, next) => {
             .save()
             .then(todo => {
                 console.log(todo);
+                req.flash('success_msg','Todo added')
                 res.redirect('/');
             })
     }
@@ -135,6 +153,7 @@ app.delete('/delete/:id', (req, res, next) => {
     Todo.remove({
         _id: req.params.id
     }).then(() => {
+        req.flash('success_msg','Todo removed')
         res.redirect('/');
     });
     // const query = {
@@ -181,6 +200,7 @@ app.put('/edit/:id', (req, res, next) => {
             todo.body = req.body.body;
             todo.save()
                 .then(todo => {
+                    req.flash('success_msg','Todo updated');
                     res.redirect('/');
                 })
         });
